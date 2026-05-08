@@ -4,6 +4,14 @@ from .models import Plainte
 
 
 class PlainteForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            if isinstance(field.widget, forms.CheckboxInput):
+                field.widget.attrs.update({'class': 'form-check-input'})
+            else:
+                field.widget.attrs.update({'class': 'form-control'})
+
     class Meta:
         model = Plainte
         fields = [
@@ -27,6 +35,8 @@ class PlainteForm(forms.ModelForm):
         ]
         widgets = {
             'date_courrier': forms.DateInput(attrs={'type': 'date'}),
+            'genre_enfant': forms.Select(),
+            'statut': forms.Select(),
             'motif_plainte': forms.Textarea(attrs={'rows': 4}),
             'remarque': forms.Textarea(attrs={'rows': 3}),
         }

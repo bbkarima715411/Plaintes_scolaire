@@ -8,28 +8,34 @@
 
 <div class="row g-3 mb-4">
     <div class="col-md-4">
-        <div class="card shadow-sm">
+        <a href="{% url 'plainte_list' %}" class="text-decoration-none text-dark">
+        <div class="card shadow-sm h-100">
             <div class="card-body">
                 <h5 class="card-title">Total des plaintes</h5>
                 <p class="display-6 mb-0">{{ total_plaintes }}</p>
             </div>
         </div>
+        </a>
     </div>
     <div class="col-md-4">
-        <div class="card shadow-sm">
+        <a href="{% url 'plainte_list' %}?statut=en_cours" class="text-decoration-none text-dark">
+        <div class="card shadow-sm h-100">
             <div class="card-body">
                 <h5 class="card-title">En cours</h5>
                 <p class="display-6 mb-0">{{ plaintes_en_cours }}</p>
             </div>
         </div>
+        </a>
     </div>
     <div class="col-md-4">
-        <div class="card shadow-sm">
+        <a href="{% url 'plainte_list' %}?statut=traitee" class="text-decoration-none text-dark">
+        <div class="card shadow-sm h-100">
             <div class="card-body">
                 <h5 class="card-title">Traitées</h5>
                 <p class="display-6 mb-0">{{ plaintes_traitees }}</p>
             </div>
         </div>
+        </a>
     </div>
 </div>
 
