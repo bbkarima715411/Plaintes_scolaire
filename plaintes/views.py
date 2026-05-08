@@ -28,13 +28,16 @@ def plainte_list(request):
     plaintes = Plainte.objects.all()
 
     if recherche:
-        plaintes = plaintes.filter(
-            Q(numero_dossier__icontains=recherche)
-            | Q(numero_fase__icontains=recherche)
-            | Q(nom_ecole__icontains=recherche)
-            | Q(nom_parent__icontains=recherche)
-            | Q(prenom_enfant__icontains=recherche)
-        )
+        for mot in recherche.split():
+            plaintes = plaintes.filter(
+                Q(numero_dossier__icontains=mot)
+                | Q(numero_fase__icontains=mot)
+                | Q(nom_ecole__icontains=mot)
+                | Q(nom_parent__icontains=mot)
+                | Q(prenom_parent__icontains=mot)
+                | Q(nom_enfant__icontains=mot)
+                | Q(prenom_enfant__icontains=mot)
+            )
 
     if statut:
         plaintes = plaintes.filter(statut=statut)
