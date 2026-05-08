@@ -4,7 +4,9 @@ from . import views
 
 
 urlpatterns = [
-    path('', views.dashboard, name='dashboard'),
+    path('', views.identification, name='identification'),
+    path('identification/', views.identification, name='identification_page'),
+    path('changer-utilisateur/', views.changer_utilisateur, name='changer_utilisateur'),
     path('plaintes/', views.plainte_list, name='plainte_list'),
     path('plaintes/ajouter/', views.plainte_create, name='plainte_create'),
     path('plaintes/<int:pk>/', views.plainte_detail, name='plainte_detail'),

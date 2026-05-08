@@ -4,6 +4,13 @@ from .models import Plainte
 
 
 class PlainteForm(forms.ModelForm):
+    retour_wf_signe = forms.TypedChoiceField(
+        choices=((True, 'Oui'), (False, 'Non')),
+        coerce=lambda value: value == 'True',
+        widget=forms.Select,
+        label='Retour wf signé',
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():

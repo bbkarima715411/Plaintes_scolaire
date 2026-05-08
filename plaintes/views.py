@@ -6,22 +6,31 @@ from .forms import PlainteForm
 from .models import Plainte
 
 
+def identification_required(view_func):
+    def wrapper(request, *args, **kwargs):
+        if not request.session.get('nom_utilisateur'):
+            return redirect('identification')
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+
+def identification(request):
+    if request.method == 'POST':
+        nom_utilisateur = request.POST.get('nom_utilisateur', '').strip()
+        if nom_utilisateur:
+            request.session['nom_utilisateur'] = nom_utilisateur
+            return redirect('plainte_list')
+
+    return render(request, 'plaintes/identification.html')
+
+
+def changer_utilisateur(request):
+    request.session.pop('nom_utilisateur', None)
+    return redirect('identification')
+
+
 @login_required
-def dashboard(request):
-    total_plaintes = Plainte.objects.count()
-    plaintes_en_cours = Plainte.objects.filter(statut=Plainte.STATUT_EN_COURS).count()
-    plaintes_traitees = Plainte.objects.filter(statut=Plainte.STATUT_TRAITEE).count()
-    dernieres_plaintes = Plainte.objects.all()[:5]
-
-    return render(request, 'plaintes/dashboard.html', {
-        'total_plaintes': total_plaintes,
-        'plaintes_en_cours': plaintes_en_cours,
-        'plaintes_traitees': plaintes_traitees,
-        'dernieres_plaintes': dernieres_plaintes,
-    })
-
-
-@login_required
+@identification_required
 def plainte_list(request):
     recherche = request.GET.get('recherche', '')
     statut = request.GET.get('statut', '')
@@ -51,12 +60,14 @@ def plainte_list(request):
 
 
 @login_required
+@identification_required
 def plainte_detail(request, pk):
     plainte = get_object_or_404(Plainte, pk=pk)
     return render(request, 'plaintes/plainte_detail.html', {'plainte': plainte})
 
 
 @login_required
+@identification_required
 def plainte_create(request):
     if request.method == 'POST':
         form = PlainteForm(request.POST)
@@ -66,12 +77,15 @@ def plainte_create(request):
             plainte.save()
             return redirect('plainte_detail', pk=plainte.pk)
     else:
-        form = PlainteForm()
+        form = PlainteForm(initial={
+            'personne_traitant_dossier': request.session.get('nom_utilisateur', ''),
+        })
 
     return render(request, 'plaintes/plainte_form.html', {'form': form, 'titre': 'Ajouter une plainte'})
 
 
 @login_required
+@identification_required
 def plainte_update(request, pk):
     plainte = get_object_or_404(Plainte, pk=pk)
 
@@ -89,6 +103,7 @@ def plainte_update(request, pk):
 
 
 @login_required
+@identification_required
 def plainte_delete(request, pk):
     plainte = get_object_or_404(Plainte, pk=pk)
 

@@ -6,13 +6,15 @@
     <a href="{% url 'plainte_create' %}" class="btn btn-primary">Ajouter une plainte</a>
 </div>
 
-<form method="get" class="card card-body shadow-sm mb-4">
+<form method="get" id="filtre-plaintes-form" class="card card-body shadow-sm mb-4">
     <div class="row g-3">
         <div class="col-md-6">
-            <input type="text" name="recherche" value="{{ recherche }}" class="form-control" placeholder="Rechercher par dossier, FASE, école, parent...">
+            <label for="recherche" class="form-label">Recherche</label>
+            <input type="text" name="recherche" id="recherche" value="{{ recherche }}" class="form-control" placeholder="Rechercher par dossier, FASE, école, parent...">
         </div>
         <div class="col-md-4">
-            <select name="statut" class="form-select">
+            <label for="statut" class="form-label">Statut</label>
+            <select name="statut" id="statut" class="form-select" onchange="this.form.submit()">
                 <option value="">Tous les statuts</option>
                 {% for value, label in statut_choices %}
                     <option value="{{ value }}" {% if statut == value %}selected{% endif %}>{{ label }}</option>
@@ -20,6 +22,7 @@
             </select>
         </div>
         <div class="col-md-2">
+            <label class="form-label d-none d-md-block">&nbsp;</label>
             <button class="btn btn-outline-primary w-100" type="submit">Filtrer</button>
         </div>
     </div>

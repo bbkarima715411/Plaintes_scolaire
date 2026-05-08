@@ -1,0 +1,21 @@
+.plainte-form-field input,
+.plainte-form-field select,
+.plainte-form-field textarea {
+    display: block;
+    width: 100%;
+    background-color: #ffffff;
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.plainte-form-field input.field-filled,
+.plainte-form-field select.field-filled,
+.plainte-form-field textarea.field-filled {
+    background-color: #eef2f7;
+    border-color: #6c8ebf;
+}
+
+.plainte-form-field input:focus,
+.plainte-form-field select:focus,
+.plainte-form-field textarea:focus {
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
