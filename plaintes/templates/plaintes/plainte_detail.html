@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>{{ plainte.numero_dossier }}</h1>
+    <div>
+        <a href="{% url 'plainte_update' plainte.pk %}" class="btn btn-warning">Modifier</a>
+        <a href="{% url 'plainte_delete' plainte.pk %}" class="btn btn-danger">Supprimer</a>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h4>Informations générales</h4>
+        <p><strong>Statut :</strong> {{ plainte.get_statut_display }}</p>
+        <p><strong>Canal utilisé :</strong> {{ plainte.canal_utilise }}</p>
+        <p><strong>Date du courrier :</strong> {{ plainte.date_courrier }}</p>
+        <p><strong>Numéro FASE :</strong> {{ plainte.numero_fase }}</p>
+
+        <h4>École</h4>
+        <p><strong>Nom :</strong> {{ plainte.nom_ecole }}</p>
+        <p><strong>Lieu :</strong> {{ plainte.lieu_ecole }}</p>
+
+        <h4>Parent et enfant</h4>
+        <p><strong>Parent :</strong> {{ plainte.nom_parent }} {{ plainte.prenom_parent }}</p>
+        <p><strong>Enfant :</strong> {{ plainte.nom_enfant }} {{ plainte.prenom_enfant }}</p>
+        <p><strong>Genre :</strong> {{ plainte.get_genre_enfant_display }}</p>
+
+        <h4>Traitement</h4>
+        <p><strong>Personnel concerné :</strong> {{ plainte.personnel_concerne }}</p>
+        <p><strong>Personne traitant le dossier :</strong> {{ plainte.personne_traitant_dossier }}</p>
+        <p><strong>Retour WF signé :</strong> {% if plainte.retour_wf_signe %}Oui{% else %}Non{% endif %}</p>
+        <p><strong>Motif :</strong><br>{{ plainte.motif_plainte }}</p>
+        <p><strong>Remarque :</strong><br>{{ plainte.remarque }}</p>
+
+        <h4>Historique simple</h4>
+        <p><strong>Créée le :</strong> {{ plainte.cree_le }}</p>
+        <p><strong>Modifiée le :</strong> {{ plainte.modifie_le }}</p>
+        <p><strong>Modifiée par :</strong> {{ plainte.modifie_par }}</p>
+    </div>
+</div>
+{% endblock %}
