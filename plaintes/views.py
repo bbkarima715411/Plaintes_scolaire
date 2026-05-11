@@ -1,4 +1,4 @@
-from io import BytesIO
+﻿from io import BytesIO
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -59,7 +59,7 @@ def plainte_list(request):
         'plaintes': plaintes,
         'recherche': recherche,
         'statut': statut,
-        'statut_choices': Plainte.STATUT_CHOICES,
+        'statut_choices': Plainte.Statut.choices,
     })
 
 
@@ -90,25 +90,21 @@ def plainte_export_excel(request):
     feuille.title = 'Plaintes'
 
     entetes = [
-        'Canal utilisé',
-        'Date du courrier',
-        'Numéro de dossier',
-        'Numéro FASE',
-        'Nom de l’école',
-        'Lieu de l’école',
-        'Nom du parent',
-        'Prénom du parent',
-        'Nom de l’enfant',
-        'Prénom de l’enfant',
-        'Genre enfant',
-        'Personnel concerné',
+        'CANAL utilisÃ©',
+        'Date sur le courrier',
+        'NÂ° dossier',
+        'NÂ° FASE',
+        'Nom Ã©cole',
+        'Lieu de l\'Ã©cole',
+        'Nom masculin',
+        'Nom fÃ©minin',
+        'PrÃ©nom de l\'enfant',
+        'prof, directeur,... concernÃ©s',
         'Motif de la plainte',
-        'Personne traitant le dossier',
-        'Statut',
-        'Retour WF signé',
+        'TraitÃ© par',
+        'Retour du WF SignÃ© le',
+        'CONCLUSION',
         'Remarque',
-        'Créée le',
-        'Modifiée le',
     ]
     feuille.append(entetes)
 
@@ -120,19 +116,15 @@ def plainte_export_excel(request):
             plainte.numero_fase,
             plainte.nom_ecole,
             plainte.lieu_ecole,
-            plainte.nom_parent,
-            plainte.prenom_parent,
-            plainte.nom_enfant,
+            plainte.nom_masculin,
+            plainte.nom_feminin,
             plainte.prenom_enfant,
-            plainte.get_genre_enfant_display(),
             plainte.personnel_concerne,
             plainte.motif_plainte,
             plainte.personne_traitant_dossier,
-            plainte.get_statut_display(),
-            'Oui' if plainte.retour_wf_signe else 'Non',
+            plainte.retour_wf_signe_le.strftime('%d/%m/%Y') if plainte.retour_wf_signe_le else '',
+            plainte.conclusion,
             plainte.remarque,
-            plainte.cree_le.strftime('%d/%m/%Y %H:%M') if plainte.cree_le else '',
-            plainte.modifie_le.strftime('%d/%m/%Y %H:%M') if plainte.modifie_le else '',
         ])
 
     fichier = BytesIO()
@@ -200,3 +192,4 @@ def plainte_delete(request, pk):
         return redirect('plainte_list')
 
     return render(request, 'plaintes/plainte_confirm_delete.html', {'plainte': plainte})
+

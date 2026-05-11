@@ -30,6 +30,8 @@ class PlainteForm(forms.ModelForm):
             'lieu_ecole',
             'nom_parent',
             'prenom_parent',
+            'nom_masculin',
+            'nom_feminin',
             'nom_enfant',
             'prenom_enfant',
             'genre_enfant',
@@ -38,12 +40,16 @@ class PlainteForm(forms.ModelForm):
             'personne_traitant_dossier',
             'statut',
             'retour_wf_signe',
+            'retour_wf_signe_le',
+            'conclusion',
             'remarque',
         ]
         widgets = {
             'date_courrier': forms.DateInput(attrs={'type': 'date'}),
+            'retour_wf_signe_le': forms.DateInput(attrs={'type': 'date'}),
             'genre_enfant': forms.Select(),
             'statut': forms.Select(),
             'motif_plainte': forms.Textarea(attrs={'rows': 4}),
+            'conclusion': forms.Textarea(attrs={'rows': 3}),
             'remarque': forms.Textarea(attrs={'rows': 3}),
         }
