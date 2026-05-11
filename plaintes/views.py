@@ -1,6 +1,10 @@
+from io import BytesIO
+
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from openpyxl import Workbook
 
 from .forms import PlainteForm
 from .models import Plainte
@@ -57,6 +61,90 @@ def plainte_list(request):
         'statut': statut,
         'statut_choices': Plainte.STATUT_CHOICES,
     })
+
+
+@login_required
+@identification_required
+def plainte_export_excel(request):
+    recherche = request.GET.get('recherche', '')
+    statut = request.GET.get('statut', '')
+    plaintes = Plainte.objects.all()
+
+    if recherche:
+        for mot in recherche.split():
+            plaintes = plaintes.filter(
+                Q(numero_dossier__icontains=mot)
+                | Q(numero_fase__icontains=mot)
+                | Q(nom_ecole__icontains=mot)
+                | Q(nom_parent__icontains=mot)
+                | Q(prenom_parent__icontains=mot)
+                | Q(nom_enfant__icontains=mot)
+                | Q(prenom_enfant__icontains=mot)
+            )
+
+    if statut:
+        plaintes = plaintes.filter(statut=statut)
+
+    workbook = Workbook()
+    feuille = workbook.active
+    feuille.title = 'Plaintes'
+
+    entetes = [
+        'Canal utilisé',
+        'Date du courrier',
+        'Numéro de dossier',
+        'Numéro FASE',
+        'Nom de l’école',
+        'Lieu de l’école',
+        'Nom du parent',
+        'Prénom du parent',
+        'Nom de l’enfant',
+        'Prénom de l’enfant',
+        'Genre enfant',
+        'Personnel concerné',
+        'Motif de la plainte',
+        'Personne traitant le dossier',
+        'Statut',
+        'Retour WF signé',
+        'Remarque',
+        'Créée le',
+        'Modifiée le',
+    ]
+    feuille.append(entetes)
+
+    for plainte in plaintes:
+        feuille.append([
+            plainte.canal_utilise,
+            plainte.date_courrier.strftime('%d/%m/%Y') if plainte.date_courrier else '',
+            plainte.numero_dossier,
+            plainte.numero_fase,
+            plainte.nom_ecole,
+            plainte.lieu_ecole,
+            plainte.nom_parent,
+            plainte.prenom_parent,
+            plainte.nom_enfant,
+            plainte.prenom_enfant,
+            plainte.get_genre_enfant_display(),
+            plainte.personnel_concerne,
+            plainte.motif_plainte,
+            plainte.personne_traitant_dossier,
+            plainte.get_statut_display(),
+            'Oui' if plainte.retour_wf_signe else 'Non',
+            plainte.remarque,
+            plainte.cree_le.strftime('%d/%m/%Y %H:%M') if plainte.cree_le else '',
+            plainte.modifie_le.strftime('%d/%m/%Y %H:%M') if plainte.modifie_le else '',
+        ])
+
+    fichier = BytesIO()
+    workbook.save(fichier)
+    fichier.seek(0)
+
+    response = HttpResponse(
+        fichier.getvalue(),
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    )
+    response['Content-Disposition'] = 'attachment; filename="plaintes_selectionnees.xlsx"'
+    return response
 
 
 @login_required

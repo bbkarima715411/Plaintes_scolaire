@@ -30,6 +30,9 @@
 
 <div class="card shadow-sm">
     <div class="card-body">
+        <div class="d-flex justify-content-end mb-3">
+            <a href="{% url 'plainte_export_excel' %}?recherche={{ recherche|urlencode }}&statut={{ statut|urlencode }}" class="btn btn-success">Exporter la liste en Excel</a>
+        </div>
         <div class="table-responsive">
             <table class="table table-striped align-middle">
                 <thead>
